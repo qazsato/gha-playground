@@ -17,6 +17,9 @@ on:
   #     - main
   push:
 
+env:
+  RUBY_VERSION: ${{ github.event.inputs.rubyVersion || '2.4' }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -24,10 +27,10 @@ jobs:
       - name: Dump context
         run: echo '${{ toJSON(github) }}'
       - name: Ruby v2.4
-        if: ${{ github.event.inputs.rubyVersion == '2.4' }}
+        if: ${{ RUBY_VERSION == '2.4' }}
         run: echo 'Exec 2.4'
       - name: Ruby v2.7
-        if: ${{ github.event.inputs.rubyVersion == '2.7' }}
+        if: ${{ RUBY_VERSION == '2.7' }}
         run: echo 'Exec 2.7'
       # Slack通知
       - name: Slack Notification on Success
@@ -36,7 +39,7 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_TITLE: Test Success
-          SLACK_MESSAGE: Ruby v${{ github.event.inputs.rubyVersion }}
+          SLACK_MESSAGE: Ruby v${{ RUBY_VERSION }}
           SLACK_COLOR: good
           MSG_MINIMAL: true
       - name: Slack Notification on Failure
@@ -45,5 +48,5 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_TITLE: Test Failure
-          SLACK_MESSAGE: Ruby v${{ github.event.inputs.rubyVersion }}
+          SLACK_MESSAGE: Ruby v${{ RUBY_VERSION }}
           SLACK_COLOR: danger
