@@ -26,3 +26,18 @@ jobs:
       - name: Ruby v2.7
         if: ${{ github.event.inputs.rubyVersion == '2.7' }}
         run: echo 'Exec 2.7'
+      # Slack通知
+      - name: Slack Notification on Success
+        if: ${{ success() }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_TITLE: Test Success
+          SLACK_COLOR: good
+      - name: Slack Notification on Failure
+        if: ${{ failure() }}
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_TITLE: Test Failure
+          SLACK_COLOR: danger
