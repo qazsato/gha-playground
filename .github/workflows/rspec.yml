@@ -12,8 +12,7 @@ on:
         - '2.4'
         - '2.7'
   pull_request:
-    types:
-      - opened
+    types: [opened, edited]
     branches:
       - main
 
