@@ -12,10 +12,9 @@ on:
         - '2.4'
         - '2.7'
   pull_request:
-    types: [opened, edited, synchronize]
+    types: [opened, synchronize]
     branches:
       - main
-  # push:
 
 env:
   RUBY_VERSION: ${{ github.event.inputs.rubyVersion || '2.4' }}
