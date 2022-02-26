@@ -1,0 +1,22 @@
+name: Run RSpec
+
+on: 
+  workflow_dispatch:
+    inputs:
+      rubyVersion:
+        description: 'Ruby Version'
+        required: true
+        default: '2.4' 
+        type: choice
+        options:
+        - '2.4'
+        - '2.7'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Ruby Version: $VERSION"
+        env:
+          VERSION: ${{ github.event.inputs.rubyVersion }}
