@@ -1,6 +1,6 @@
 name: Run RSpec
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       rubyVersion:
@@ -11,12 +11,22 @@ on:
         options:
         - '2.4'
         - '2.7'
+  release:
+    types: [published]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: dump context
+        run: echo '${{ toJSON(github) }}'
       - run: |
           echo "Ruby Version: $VERSION"
         env:
           VERSION: ${{ github.event.inputs.rubyVersion }}
+      - name: Rub Ruby v2.4
+        if: ${{ github.event.inputs.rubyVersion == '2.4' }}
+        run: echo 'Exec 2.4'
+      - name: Rub Ruby v2.7
+        if: ${{ github.event.inputs.rubyVersion == '2.7' }}
+        run: echo 'Exec 2.7'
