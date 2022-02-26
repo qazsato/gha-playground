@@ -33,6 +33,7 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_TITLE: Test Success
+          SLACK_MESSAGE: Ruby v${{ github.event.inputs.rubyVersion }}
           SLACK_COLOR: good
       - name: Slack Notification on Failure
         if: ${{ failure() }}
@@ -40,4 +41,5 @@ jobs:
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
           SLACK_TITLE: Test Failure
+          SLACK_MESSAGE: Ruby v${{ github.event.inputs.rubyVersion }}
           SLACK_COLOR: danger
