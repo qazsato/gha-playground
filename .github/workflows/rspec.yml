@@ -11,11 +11,11 @@ on:
         options:
         - '2.4'
         - '2.7'
-  # pull_request:
-  #   types: [opened, edited]
-  #   branches:
-  #     - main
-  push:
+  pull_request:
+    types: [opened, edited, synchronize]
+    branches:
+      - main
+  # push:
 
 env:
   RUBY_VERSION: ${{ github.event.inputs.rubyVersion || '2.4' }}
