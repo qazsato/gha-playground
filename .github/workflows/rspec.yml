@@ -11,10 +11,10 @@ on:
         options:
         - '2.4'
         - '2.7'
-  pull_request:
-    types: [opened, edited]
-    branches:
-      - main
+  # pull_request:
+  #   types: [opened, edited]
+  #   branches:
+  #     - main
   push:
 
 jobs:
