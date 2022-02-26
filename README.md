@@ -1,1 +1,1 @@
-# GHA Playground
+# GitHub Actions Playground
