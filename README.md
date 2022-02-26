@@ -1,3 +1,3 @@
 # GHA Playground
 
-test 6-b
+test 6-c
