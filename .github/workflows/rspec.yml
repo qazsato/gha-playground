@@ -15,6 +15,9 @@ on:
     types: [opened, synchronize]
     branches:
       - main
+  push:
+    branches:    
+      - main
 
 env:
   RUBY_VERSION: ${{ github.event.inputs.rubyVersion || '2.4' }}
