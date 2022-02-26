@@ -11,8 +11,11 @@ on:
         options:
         - '2.4'
         - '2.7'
-  release:
-    types: [published]
+  pull_request:
+    types:
+      - opened
+    branches:
+      - main
 
 jobs:
   test:
