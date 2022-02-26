@@ -35,6 +35,7 @@ jobs:
           SLACK_TITLE: Test Success
           SLACK_MESSAGE: Ruby v${{ github.event.inputs.rubyVersion }}
           SLACK_COLOR: good
+          MSG_MINIMAL: true
       - name: Slack Notification on Failure
         if: ${{ failure() }}
         uses: rtCamp/action-slack-notify@v2
