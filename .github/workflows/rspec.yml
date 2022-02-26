@@ -23,6 +23,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     # PR が Draft である or PR タイトルに "[skip ci]" が含まれている場合は実行スキップする
+    # cf. https://docs.github.com/ja/actions/managing-workflow-runs/skipping-workflow-runs
     if: ${{ !github.event.pull_request.draft && !contains(github.event.pull_request.title, '[skip ci]')}}
     steps:
       - name: Dump context
