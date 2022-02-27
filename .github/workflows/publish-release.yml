@@ -21,13 +21,14 @@ jobs:
       - uses: actions/github-script@v5
         id: changelog_url
         env:
+          REPOSITORY: '${{github.repository}}'
           PREV_TAG_NAME: '${{steps.prev_tag.outputs.result}}'
           CURRENT_TAG_NAME: '${{github.event.release.tag_name}}'
         with:
           result-encoding: string
           script: |
-            const { PREV_TAG_NAME, CURRENT_TAG_NAME } = process.env
-            return `https://github.com/qazsato/gha_playground/compare/${PREV_TAG_NAME}...${CURRENT_TAG_NAME}`
+            const { REPOSITORY, PREV_TAG_NAME, CURRENT_TAG_NAME } = process.env
+            return `https://github.com/${REPOSITORY}/compare/${PREV_TAG_NAME}...${CURRENT_TAG_NAME}`
       - uses: actions/github-script@v5
         id: release_note
         env:
