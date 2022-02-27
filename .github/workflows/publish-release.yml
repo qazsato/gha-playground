@@ -1,0 +1,87 @@
+name: Publish Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  notify_slack:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump context
+        run: echo '${{ toJSON(github) }}'
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get previous tag version
+        id: prev_tag
+        run: |
+          PREV_TAG_NAME=`git describe --abbrev=0 --tags \`git rev-list --tags --skip=1 --max-count=1\``
+          echo "::set-output name=result::$PREV_TAG_NAME"
+      - uses: actions/github-script@v5
+        id: changelog_url
+        env:
+          PREV_TAG_NAME: '${{steps.prev_tag.outputs.result}}'
+          CURRENT_TAG_NAME: '${{github.event.release.tag_name}}'
+        with:
+          result-encoding: string
+          script: |
+            const { PREV_TAG_NAME, CURRENT_TAG_NAME } = process.env
+            return `https://github.com/qazsato/gha_playground/compare/${PREV_TAG_NAME}...${CURRENT_TAG_NAME}`
+      - uses: actions/github-script@v5
+        id: release_note
+        env:
+          RELEASE_BODY: '${{github.event.release.body}}'
+        with:
+          result-encoding: string
+          script: |
+            const { RELEASE_BODY } = process.env
+            // リリースノートにダブルクォート(")が含まれるとパースエラーとなるためエスケープ
+            return RELEASE_BODY.replace(/\"/g, '\\"')
+      - name: Send Channel
+        run: |
+          jq -n '{
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "<!here> \n*${{github.event.repository.name}} をリリースします* 🚀"
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "🏷 *バージョン* \n${{github.event.release.tag_name}}"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "📝 *リリースノート* \n${{steps.release_note.outputs.result}}"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "<${{steps.changelog_url.outputs.result}}|Changelog>"
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "🧑‍💻 *担当者* \n${{github.actor}}"
+                  }
+                ]
+              }
+            ]
+          }' | curl -H 'Content-Type: application/json' -d @- ${{ secrets.SLACK_WEBHOOK }}
