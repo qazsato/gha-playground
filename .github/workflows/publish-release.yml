@@ -16,19 +16,19 @@ jobs:
       - name: Get previous tag version
         id: prev_tag
         run: |
+          # cf. https://gist.github.com/kjantzer/98dfa5138ad6e741c24f
           PREV_TAG_NAME=`git describe --abbrev=0 --tags \`git rev-list --tags --skip=1 --max-count=1\``
           echo "::set-output name=result::$PREV_TAG_NAME"
       - uses: actions/github-script@v5
         id: changelog_url
         env:
-          REPOSITORY: '${{github.repository}}'
           PREV_TAG_NAME: '${{steps.prev_tag.outputs.result}}'
           CURRENT_TAG_NAME: '${{github.event.release.tag_name}}'
         with:
           result-encoding: string
           script: |
-            const { REPOSITORY, PREV_TAG_NAME, CURRENT_TAG_NAME } = process.env
-            return `https://github.com/${REPOSITORY}/compare/${PREV_TAG_NAME}...${CURRENT_TAG_NAME}`
+            const { GITHUB_REPOSITORY, PREV_TAG_NAME, CURRENT_TAG_NAME } = process.env
+            return `https://github.com/${GITHUB_REPOSITORY}/compare/${PREV_TAG_NAME}...${CURRENT_TAG_NAME}`
       - uses: actions/github-script@v5
         id: release_note
         env:
@@ -36,12 +36,13 @@ jobs:
         with:
           result-encoding: string
           script: |
+            // リリースノートにダブルクォート(")、シングルクォート(')が含まれるとパースエラーとなるため扱える文字に置換
             const { RELEASE_BODY } = process.env
-            // リリースノートにダブルクォート(")が含まれるとパースエラーとなるためエスケープ
-            return RELEASE_BODY.replace(/\"/g, '\\"')
+            return RELEASE_BODY.replace(/\"/g, '"').replace(/\'/g, ''')
       - name: Send Channel
         run: |
           jq -n '{
+            "text": "${{github.event.repository.name}} (${{github.event.release.tag_name}}) リリース 🚀",
             "blocks": [
               {
                 "type": "section",
