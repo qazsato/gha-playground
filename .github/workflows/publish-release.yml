@@ -38,7 +38,7 @@ jobs:
           script: |
             // リリースノートにダブルクォート(")、シングルクォート(')が含まれるとパースエラーとなるため扱える文字に置換
             const { RELEASE_BODY } = process.env
-            return RELEASE_BODY.replace(/\"/g, '"').replace(/\'/g, ''')
+            return RELEASE_BODY.replace(/\"/g, '”').replace(/\'/g, '’')
       - name: Send Channel
         run: |
           jq -n '{
